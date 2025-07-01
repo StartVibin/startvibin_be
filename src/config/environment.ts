@@ -13,10 +13,6 @@ export const config = {
   FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
   ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
 
-  // Rate Limiting
-  RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  RATE_LIMIT_MAX_REQUESTS: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'),
-
   // MongoDB
   MONGODB_URI: process.env.MONGODB_URI || 'mongodb+srv://admin:NJIWthnO7WAI0o6u@cluster0.ttvvz.mongodb.net/beatwise',
   MONGODB_DB_NAME: process.env.MONGODB_DB_NAME || 'beatwise',

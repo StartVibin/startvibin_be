@@ -155,4 +155,49 @@ function generateReferralCode(): string {
     result += chars.charAt(Math.floor(Math.random() * chars.length))
   }
   return result
-} 
+}
+
+// Get user profile by wallet address
+export const getUserProfile = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { walletAddress } = req.params
+
+    if (!walletAddress) {
+      return next(new AppError('Wallet address is required', 400))
+    }
+
+    // Validate wallet address format
+    if (!ethers.isAddress(walletAddress)) {
+      return next(new AppError('Invalid wallet address format', 400))
+    }
+
+    // Find user by wallet address
+    const user = await User.findByWalletAddress(walletAddress.toLowerCase())
+    if (!user) {
+      return next(new AppError('User not found', 404))
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        walletAddress: user.walletAddress,
+        xJoined: user.xJoined,
+        discordJoined: user.discordJoined,
+        telegramJoined: user.telegramJoined,
+        xId: user.xId,
+        discordId: user.discordId,
+        telegramId: user.telegramId,
+        gamePoints: user.gamePoints,
+        referralPoints: user.referralPoints,
+        socialPoints: user.socialPoints,
+        referralCode: user.referralCode,
+        isWhitelist: user.isWhitelist,
+        highScore: user.highScore,
+        totalPoints: user.totalPoints,
+        totalSocialJoined: [user.xJoined, user.discordJoined, user.telegramJoined].filter(Boolean).length,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    })
+  }
+) 
