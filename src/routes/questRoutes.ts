@@ -1,32 +1,33 @@
 import { Router } from 'express'
-import { 
-  getAllQuests, 
-  getQuestById, 
-  completeQuest,
-  completeTwitterQuest,
-  completeDiscordQuest,
-  completeTelegramQuest,
-  getUserPoints,
-  completeXTaskByWallet
-} from '@/controllers/questController'
-import { apiLimiter } from '@/middleware/rateLimiter'
+import {
+  verifyXConnection,
+  verifyXFollow,
+  verifyXReply,
+  verifyXRepost,
+  verifyXPost,
+  verifyTelegramConnection,
+  verifyTelegramGroupJoin,
+  verifyEmailConnection,
+  getUserQuestProgress
+} from '../controllers/questController'
 
 const router = Router()
 
-// All routes are now public
-router.get('/', getAllQuests)
-router.get('/:id', getQuestById)
-router.get('/user/:userId/points', getUserPoints)
+// X/Twitter quest verification endpoints
+router.post('/x/connect', verifyXConnection)
+router.post('/x/follow', verifyXFollow)
+router.post('/x/reply', verifyXReply)
+router.post('/x/repost', verifyXRepost)
+router.post('/x/post', verifyXPost)
 
-// Social quest completion endpoints
-router.post('/twitter/complete', apiLimiter, completeTwitterQuest)
-router.post('/discord/complete', apiLimiter, completeDiscordQuest)
-router.post('/telegram/complete', apiLimiter, completeTelegramQuest)
+// Telegram quest verification endpoints
+router.post('/telegram/connect', verifyTelegramConnection)
+router.post('/telegram/join-group', verifyTelegramGroupJoin)
 
-// Generic quest completion endpoint
-router.post('/complete', apiLimiter, completeQuest)
+// Email quest verification endpoint
+router.post('/email/connect', verifyEmailConnection)
 
-// POST /quests/x-task - Complete X task by wallet address (simple)
-router.post('/x-task', completeXTaskByWallet)
+// Get user quest progress
+router.get('/progress/:walletAddress', getUserQuestProgress)
 
 export default router

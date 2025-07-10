@@ -71,11 +71,11 @@ export const authenticateWallet = catchAsync(
         // Create new user
         user = new User({
           walletAddress: normalizedAddress,
-          points: 0,
           xJoined: false,
-          discordJoined: false,
+          telegramVerified: false,
           telegramJoined: false,
-          referralCode: generateReferralCode()
+          referralCode: generateReferralCode(),
+          inviteCode: generateReferralCode() // Generate unique invite code
         })
         
         await user.save()
@@ -99,11 +99,33 @@ export const authenticateWallet = catchAsync(
             socialPoints: user.socialPoints,
             totalPoints: user.totalPoints,
             xJoined: user.xJoined,
-            discordJoined: user.discordJoined,
+            telegramVerified: user.telegramVerified,
             telegramJoined: user.telegramJoined,
+            // Social task completion flags
+            xConnected: user.xConnected,
+            xFollowed: user.xFollowed,
+            xReplied: user.xReplied,
+            xReposted: user.xReposted,
+            xPosted: user.xPosted,
+            telegramConnected: user.telegramConnected,
+            telegramJoinedGroup: user.telegramJoinedGroup,
+            emailConnected: user.emailConnected,
             xId: user.xId,
-            discordId: user.discordId,
             telegramId: user.telegramId,
+            // X/Twitter user data
+            xUsername: user.xUsername,
+            xDisplayName: user.xDisplayName,
+            xProfileImageUrl: user.xProfileImageUrl,
+            xVerified: user.xVerified,
+            // Telegram user data
+            telegramUsername: user.telegramUsername,
+            telegramFirstName: user.telegramFirstName,
+            telegramLastName: user.telegramLastName,
+            telegramPhotoUrl: user.telegramPhotoUrl,
+            // Invite system
+            inviteCode: user.inviteCode,
+            invitedBy: user.invitedBy,
+            invitedUsers: user.invitedUsers,
             referralCode: user.referralCode,
             isWhitelist: user.isWhitelist,
             createdAt: user.createdAt,
@@ -179,24 +201,88 @@ export const getUserProfile = catchAsync(
 
     res.status(200).json({
       success: true,
+              data: {
+          walletAddress: user.walletAddress,
+          xJoined: user.xJoined,
+          telegramVerified: user.telegramVerified,
+          telegramJoined: user.telegramJoined,
+          // Social task completion flags
+          xConnected: user.xConnected,
+          xFollowed: user.xFollowed,
+          xReplied: user.xReplied,
+          xReposted: user.xReposted,
+          xPosted: user.xPosted,
+          telegramConnected: user.telegramConnected,
+          telegramJoinedGroup: user.telegramJoinedGroup,
+          emailConnected: user.emailConnected,
+          xId: user.xId,
+          telegramId: user.telegramId,
+          // X/Twitter user data
+          xUsername: user.xUsername,
+          xDisplayName: user.xDisplayName,
+          xProfileImageUrl: user.xProfileImageUrl,
+          xVerified: user.xVerified,
+          // Telegram user data
+          telegramUsername: user.telegramUsername,
+          telegramFirstName: user.telegramFirstName,
+          telegramLastName: user.telegramLastName,
+          telegramPhotoUrl: user.telegramPhotoUrl,
+          // Invite system
+          inviteCode: user.inviteCode,
+          invitedBy: user.invitedBy,
+          invitedUsers: user.invitedUsers,
+          gamePoints: user.gamePoints,
+          referralPoints: user.referralPoints,
+          socialPoints: user.socialPoints,
+          referralCode: user.referralCode,
+          isWhitelist: user.isWhitelist,
+          highScore: user.highScore,
+          totalPoints: user.totalPoints,
+          totalSocialJoined: [user.xJoined, user.telegramJoined].filter(Boolean).length,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt
+        }
+    })
+  }
+) 
+
+// Get Telegram user data by wallet address
+export const getTelegramUserData = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { walletAddress } = req.params
+
+    if (!walletAddress) {
+      return next(new AppError('Wallet address is required', 400))
+    }
+
+    // Validate wallet address format
+    if (!ethers.isAddress(walletAddress)) {
+      return next(new AppError('Invalid wallet address format', 400))
+    }
+
+    // Find user by wallet address
+    const user = await User.findByWalletAddress(walletAddress.toLowerCase())
+    if (!user) {
+      return next(new AppError('User not found', 404))
+    }
+
+    // Check if user has Telegram data
+    if (!user.telegramJoined || !user.telegramId) {
+      return next(new AppError('User has not connected Telegram', 404))
+    }
+
+    res.status(200).json({
+      success: true,
       data: {
         walletAddress: user.walletAddress,
-        xJoined: user.xJoined,
-        discordJoined: user.discordJoined,
-        telegramJoined: user.telegramJoined,
-        xId: user.xId,
-        discordId: user.discordId,
         telegramId: user.telegramId,
-        gamePoints: user.gamePoints,
-        referralPoints: user.referralPoints,
-        socialPoints: user.socialPoints,
-        referralCode: user.referralCode,
-        isWhitelist: user.isWhitelist,
-        highScore: user.highScore,
-        totalPoints: user.totalPoints,
-        totalSocialJoined: [user.xJoined, user.discordJoined, user.telegramJoined].filter(Boolean).length,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        telegramUsername: user.telegramUsername,
+        telegramFirstName: user.telegramFirstName,
+        telegramLastName: user.telegramLastName,
+        telegramPhotoUrl: user.telegramPhotoUrl,
+        telegramVerified: user.telegramVerified,
+        telegramJoined: user.telegramJoined,
+        telegramJoinedAt: user.updatedAt // Assuming this is when they joined
       }
     })
   }

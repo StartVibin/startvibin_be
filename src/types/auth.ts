@@ -8,24 +8,46 @@ export interface WalletAuthResponse {
   success: boolean
   message: string
   data: {
-    user: {
-      id: string
-      walletAddress: string
-      gamePoints: number
-      referralPoints: number
-      socialPoints: number
-      totalPoints: number
-      xJoined: boolean
-      discordJoined: boolean
-      telegramJoined: boolean
-      xId: string
-      discordId: string
-      telegramId: string
-      referralCode: string
-      isWhitelist: boolean
-      createdAt: Date
-      updatedAt: Date
-    }
+          user: {
+        id: string
+        walletAddress: string
+        gamePoints: number
+        referralPoints: number
+        socialPoints: number
+        totalPoints: number
+        xJoined: boolean
+        telegramVerified: boolean
+        telegramJoined: boolean
+        // Social task completion flags
+        xConnected: boolean
+        xFollowed: boolean
+        xReplied: boolean
+        xReposted: boolean
+        xPosted: boolean
+        telegramConnected: boolean
+        telegramJoinedGroup: boolean
+        emailConnected: boolean
+        xId: string
+        telegramId: string
+        // X/Twitter user data
+        xUsername: string
+        xDisplayName: string
+        xProfileImageUrl: string
+        xVerified: boolean
+        // Telegram user data
+        telegramUsername: string
+        telegramFirstName: string
+        telegramLastName: string
+        telegramPhotoUrl: string
+        // Invite system
+        inviteCode: string
+        invitedBy: string
+        invitedUsers: string[]
+        referralCode: string
+        isWhitelist: boolean
+        createdAt: Date
+        updatedAt: Date
+      }
     isNewUser: boolean
   }
 }
@@ -33,4 +55,24 @@ export interface WalletAuthResponse {
 export interface SignatureVerificationResult {
   isValid: boolean
   recoveredAddress: string
+}
+
+export interface TelegramUserData {
+  id: number
+  first_name: string
+  last_name?: string
+  username?: string
+  photo_url?: string
+  auth_date: number
+  hash: string
+}
+
+export interface TelegramAuthRequest {
+  telegramData: TelegramUserData
+  walletAddress: string
+}
+
+export interface TelegramMembershipVerificationRequest {
+  telegramId: number
+  walletAddress: string
 } 

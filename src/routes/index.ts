@@ -3,8 +3,8 @@ import questRoutes from './questRoutes'
 import authRoutes from './authRoutes'
 import referralRoutes from './referralRoutes'
 import leaderboardRoutes from './leaderboardRoutes'
-import discordRoutes from './discordRoutes'
 import gameRoutes from './gameRoutes'
+import telegramRoutes from './telegramRoutes'
 
 const router = Router()
 
@@ -25,7 +25,7 @@ router.use('/quests', questRoutes)
 router.use('/auth', authRoutes)
 router.use('/referrals', referralRoutes)
 router.use('/leaderboard', leaderboardRoutes)
-router.use('/discord', discordRoutes)
 router.use('/game', gameRoutes)
+router.use('/telegram', telegramRoutes)
 
 export default router

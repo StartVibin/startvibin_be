@@ -1,6 +1,6 @@
 export interface Quest {
   id: string
-  platform: 'twitter' | 'discord' | 'telegram'
+  platform: 'twitter' | 'telegram'
   title: string
   description: string
   points: number
@@ -32,10 +32,8 @@ export interface CompleteQuestRequest {
 export interface SocialQuestRequest {
   userId: string
   twitterUsername?: string
-  discordUserId?: string
   telegramUserId?: string
   xId?: string
-  discordId?: string
   telegramId?: string
   proof?: string
   metadata?: Record<string, any>
