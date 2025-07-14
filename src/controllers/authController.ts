@@ -71,7 +71,7 @@ export const authenticateWallet = catchAsync(
         // Create new user
         user = new User({
           walletAddress: normalizedAddress,
-          xJoined: false,
+          xConnected: false,
           telegramVerified: false,
           telegramJoined: false,
           referralCode: generateReferralCode(),
@@ -98,7 +98,7 @@ export const authenticateWallet = catchAsync(
             referralPoints: user.referralPoints,
             socialPoints: user.socialPoints,
             totalPoints: user.totalPoints,
-            xJoined: user.xJoined,
+       
             telegramVerified: user.telegramVerified,
             telegramJoined: user.telegramJoined,
             // Social task completion flags
@@ -203,11 +203,11 @@ export const getUserProfile = catchAsync(
       success: true,
               data: {
           walletAddress: user.walletAddress,
-          xJoined: user.xJoined,
+          xConnected: user.xConnected,  
           telegramVerified: user.telegramVerified,
           telegramJoined: user.telegramJoined,
           // Social task completion flags
-          xConnected: user.xConnected,
+  
           xFollowed: user.xFollowed,
           xReplied: user.xReplied,
           xReposted: user.xReposted,
@@ -238,7 +238,7 @@ export const getUserProfile = catchAsync(
           isWhitelist: user.isWhitelist,
           highScore: user.highScore,
           totalPoints: user.totalPoints,
-          totalSocialJoined: [user.xJoined, user.telegramJoined].filter(Boolean).length,
+          totalSocialJoined: [user.xConnected, user.telegramJoined].filter(Boolean).length,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt
         }

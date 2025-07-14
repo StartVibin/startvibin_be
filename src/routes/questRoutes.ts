@@ -7,6 +7,7 @@ import {
   verifyXPost,
   verifyTelegramConnection,
   verifyTelegramGroupJoin,
+  verifyTelegramGroupJoinFrontend,
   verifyEmailConnection,
   getUserQuestProgress
 } from '../controllers/questController'
@@ -23,6 +24,7 @@ router.post('/x/post', verifyXPost)
 // Telegram quest verification endpoints
 router.post('/telegram/connect', verifyTelegramConnection)
 router.post('/telegram/join-group', verifyTelegramGroupJoin)
+router.post('/telegram/verify-group-join', verifyTelegramGroupJoinFrontend)
 
 // Email quest verification endpoint
 router.post('/email/connect', verifyEmailConnection)

@@ -4,7 +4,9 @@ import {
   getGameStats, 
   getTopPlayers, 
   getUserRank, 
-  resetGamePoints 
+  resetGamePoints,
+  checkCanPlayGame,
+  recordGamePlay
 } from '@/controllers/gameController'
 
 const router = Router()
@@ -23,5 +25,11 @@ router.get('/rank/:walletAddress', getUserRank)
 
 // DELETE /game/reset/:walletAddress - Reset user's game points (admin)
 router.delete('/reset/:walletAddress', resetGamePoints)
+
+// GET /game/can-play/:walletAddress - Check if user can play a game today
+router.get('/can-play/:walletAddress', checkCanPlayGame)
+
+// POST /game/record-play - Record a game play (call when game starts)
+router.post('/record-play', recordGamePlay)
 
 export default router 

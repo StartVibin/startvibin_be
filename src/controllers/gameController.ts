@@ -197,4 +197,78 @@ export const resetGamePoints = catchAsync(
       }
     })
   }
+)
+
+// Check if user can play a game today
+export const checkCanPlayGame = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { walletAddress } = req.params
+
+    if (!walletAddress) {
+      return next(new AppError('Wallet address is required', 400))
+    }
+
+    // Find user by wallet address
+    const user = await User.findByWalletAddress(walletAddress)
+    if (!user) {
+      return next(new AppError('User not found', 404))
+    }
+
+    const canPlay = user.canPlayGame()
+    const gamesRemaining = canPlay ? 5 - user.dailyGamesPlayed : 0
+
+    logger.info(`Game play check for user ${walletAddress}: can play = ${canPlay}, games remaining = ${gamesRemaining}`)
+
+    res.status(200).json({
+      success: true,
+      data: {
+        walletAddress: user.walletAddress,
+        canPlay,
+        dailyGamesPlayed: user.dailyGamesPlayed,
+        gamesRemaining,
+        maxGamesPerDay: 5,
+        lastGameDate: user.lastGameDate
+      }
+    })
+  }
+)
+
+// Record a game play (call this when game starts)
+export const recordGamePlay = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { walletAddress } = req.body
+
+    if (!walletAddress) {
+      return next(new AppError('Wallet address is required', 400))
+    }
+
+    // Find user by wallet address
+    const user = await User.findByWalletAddress(walletAddress)
+    if (!user) {
+      return next(new AppError('User not found', 404))
+    }
+
+    // Check if user can play
+    if (!user.canPlayGame()) {
+      return next(new AppError('Daily game limit reached. You can play 5 games per day.', 429))
+    }
+
+    // Record the game play
+    user.recordGamePlay()
+    await user.save()
+
+    logger.info(`Game play recorded for user ${walletAddress}: ${user.dailyGamesPlayed}/5 games today`)
+
+    res.status(200).json({
+      success: true,
+      message: 'Game play recorded successfully',
+      data: {
+        walletAddress: user.walletAddress,
+        dailyGamesPlayed: user.dailyGamesPlayed,
+        gamesRemaining: 5 - user.dailyGamesPlayed,
+        maxGamesPerDay: 5,
+        lastGameDate: user.lastGameDate
+      }
+    })
+  }
 ) 

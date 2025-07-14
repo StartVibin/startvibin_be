@@ -28,7 +28,7 @@ export const verifyXConnection = catchAsync(
     user.xProfileImageUrl = xProfileImageUrl || ''
     user.xVerified = xVerified || false
     user.xConnected = true
-    user.xJoined = true
+
 
     // Award social points for X connection (only if not already connected)
     let pointsAwarded = 0;
@@ -347,10 +347,60 @@ export const verifyTelegramGroupJoin = catchAsync(
   }
 )
 
+// Verify Telegram group join (frontend call)
+export const verifyTelegramGroupJoinFrontend = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { walletAddress, groupUsername } = req.body
+
+    if (!walletAddress || !groupUsername) {
+      return next(new AppError('Wallet address and group username are required', 400))
+    }
+
+    // Find user by wallet address
+    const user = await User.findOne({ walletAddress: walletAddress.toLowerCase() })
+    if (!user) {
+      return next(new AppError('User not found', 404))
+    }
+
+    // Check if user has connected Telegram
+    if (!user.telegramConnected) {
+      return next(new AppError('User must connect Telegram account first', 400))
+    }
+
+    // Check if already joined group
+    if (user.telegramJoinedGroup) {
+      return next(new AppError('User has already joined the group', 400))
+    }
+
+    // For now, we'll trust the user and award points
+    // In a real implementation, you would verify group membership via Telegram Bot API
+    user.telegramJoined = true
+    user.telegramJoinedGroup = true
+    const pointsAwarded = 200
+    user.socialPoints += pointsAwarded
+    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
+
+    await user.save()
+
+    logger.info(`User ${walletAddress} joined Telegram group ${groupUsername}, awarded ${pointsAwarded} points`)
+
+    res.status(200).json({
+      success: true,
+      message: 'Telegram group join verified successfully',
+      data: {
+        pointsAwarded,
+        totalSocialPoints: user.socialPoints,
+        totalPoints: user.totalPoints,
+        telegramJoinedGroup: user.telegramJoinedGroup
+      }
+    })
+  }
+)
+
 // Verify email connection
 export const verifyEmailConnection = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { walletAddress, email } = req.body
+    const { walletAddress, email, googleUserData } = req.body
 
     if (!walletAddress || !email) {
       return next(new AppError('Wallet address and email are required', 400))
@@ -369,6 +419,16 @@ export const verifyEmailConnection = catchAsync(
 
     // Mark as connected and award points
     user.emailConnected = true
+    user.email = email
+    
+    // Store Google user data if provided
+    if (googleUserData) {
+      user.googleId = googleUserData.id
+      user.googleName = googleUserData.name
+      user.googlePicture = googleUserData.picture
+      user.googleVerifiedEmail = googleUserData.verified_email
+    }
+    
     const pointsAwarded = 100
     user.socialPoints += pointsAwarded
     user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints

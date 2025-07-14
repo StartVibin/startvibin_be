@@ -15,11 +15,10 @@ export interface WalletAuthResponse {
         referralPoints: number
         socialPoints: number
         totalPoints: number
-        xJoined: boolean
+        xConnected: boolean
         telegramVerified: boolean
         telegramJoined: boolean
         // Social task completion flags
-        xConnected: boolean
         xFollowed: boolean
         xReplied: boolean
         xReposted: boolean
@@ -75,4 +74,45 @@ export interface TelegramAuthRequest {
 export interface TelegramMembershipVerificationRequest {
   telegramId: number
   walletAddress: string
+} 
+
+export interface UserProfile {
+  walletAddress: string
+  telegramVerified: boolean
+  telegramJoined: boolean
+  xConnected: boolean
+  xFollowed: boolean
+  xReplied: boolean
+  xReposted: boolean
+  xPosted: boolean
+  telegramConnected: boolean
+  telegramJoinedGroup: boolean
+  emailConnected: boolean
+  xId: string
+  telegramId: string
+  xUsername: string
+  xDisplayName: string
+  xProfileImageUrl: string
+  xVerified: boolean
+  telegramUsername: string
+  telegramFirstName: string
+  telegramLastName: string
+  telegramPhotoUrl: string
+  email: string
+  googleId: string
+  googleName: string
+  googlePicture: string
+  googleVerifiedEmail: boolean
+  inviteCode: string
+  invitedBy: string
+  invitedUsers: string[]
+  gamePoints: number
+  referralPoints: number
+  socialPoints: number
+  referralCode: string
+  isWhitelist: boolean
+  highScore: number
+  createdAt: Date
+  updatedAt: Date
+  totalPoints: number
 } 
