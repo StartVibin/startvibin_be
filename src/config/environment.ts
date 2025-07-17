@@ -20,6 +20,7 @@ export const config = {
   // External APIs
   WALLET_CONNECT_PROJECT_ID: process.env.WALLET_CONNECT_PROJECT_ID || 'your_wallet_connect_project_id',
   THIRD_PARTY_API_KEY: process.env.THIRD_PARTY_API_KEY || 'your_third_party_api_key',
+  X_POST_ID: '1943048641608061324',
 } as const
 
 export default config

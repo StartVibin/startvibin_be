@@ -36,7 +36,6 @@ export const verifyXConnection = catchAsync(
       pointsAwarded = 100;
       user.socialPoints += pointsAwarded;
     }
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -89,7 +88,6 @@ export const verifyXFollow = catchAsync(
     user.xFollowed = true
     const pointsAwarded = 200
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -137,7 +135,6 @@ export const verifyXReply = catchAsync(
     user.xReplied = true
     const pointsAwarded = 300
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -185,7 +182,6 @@ export const verifyXRepost = catchAsync(
     user.xReposted = true
     const pointsAwarded = 300
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -233,7 +229,6 @@ export const verifyXPost = catchAsync(
     user.xPosted = true
     const pointsAwarded = 100
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -279,7 +274,6 @@ export const verifyTelegramConnection = catchAsync(
     // Award social points for Telegram connection
     const pointsAwarded = 100
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -328,7 +322,6 @@ export const verifyTelegramGroupJoin = catchAsync(
     user.telegramJoinedGroup = true
     const pointsAwarded = 200
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -378,7 +371,6 @@ export const verifyTelegramGroupJoinFrontend = catchAsync(
     user.telegramJoinedGroup = true
     const pointsAwarded = 200
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 
@@ -431,7 +423,6 @@ export const verifyEmailConnection = catchAsync(
     
     const pointsAwarded = 100
     user.socialPoints += pointsAwarded
-    user.totalPoints = user.gamePoints + user.socialPoints + user.referralPoints
 
     await user.save()
 

@@ -10,7 +10,7 @@ export const getTopUsers = catchAsync(
     const page = parseInt(req.query.page as string) || 1
     const skip = (page - 1) * limit
 
-    // Get users sorted by total points (gamePoints + referralPoints + socialPoints)
+    // Get users sorted by total points (gamePoints + referralPoints + socialPoints, excluding airdropped)
     const users = await User.aggregate([
       {
         $addFields: {
@@ -35,6 +35,7 @@ export const getTopUsers = catchAsync(
           gamePoints: 1,
           referralPoints: 1,
           socialPoints: 1,
+          airdroped: 1,
           rank: { $add: [1, '$skip'] } // This will be calculated properly in the next step
         }
       }
@@ -81,7 +82,7 @@ export const getUserRank = catchAsync(
       return next(new AppError('User not found', 404))
     }
 
-    // Calculate user's total points
+    // Calculate user's total points (excluding airdropped)
     const userTotalPoints = user.gamePoints + user.referralPoints + user.socialPoints
 
     // Count users with higher total points (this gives us the rank)
@@ -112,15 +113,16 @@ export const getUserRank = catchAsync(
 
     res.status(200).json({
       success: true,
-      data: {
-        walletAddress: user.walletAddress,
-        totalPoints: userTotalPoints,
-        gamePoints: user.gamePoints,
-        referralPoints: user.referralPoints,
-        socialPoints: user.socialPoints,
-        rank: userRank,
-        totalUsers
-      }
+              data: {
+          walletAddress: user.walletAddress,
+          totalPoints: userTotalPoints,
+          gamePoints: user.gamePoints,
+          referralPoints: user.referralPoints,
+          socialPoints: user.socialPoints,
+          airdroped: user.airdroped,
+          rank: userRank,
+          totalUsers
+        }
     })
   }
 )
@@ -161,7 +163,7 @@ export const getLeaderboardByType = catchAsync(
     let totalUsers
 
     if (type.toLowerCase() === 'total') {
-      // For total points, we need to aggregate
+      // For total points, we need to aggregate (excluding airdropped)
       users = await User.aggregate([
         {
           $addFields: {
@@ -185,7 +187,8 @@ export const getLeaderboardByType = catchAsync(
             totalPoints: 1,
             gamePoints: 1,
             referralPoints: 1,
-            socialPoints: 1
+            socialPoints: 1,
+            airdroped: 1
           }
         }
       ])
@@ -197,7 +200,7 @@ export const getLeaderboardByType = catchAsync(
         .sort({ [sortField]: -1 })
         .skip(skip)
         .limit(limit)
-        .select(`walletAddress ${pointType} gamePoints referralPoints socialPoints`)
+        .select(`walletAddress ${pointType} gamePoints referralPoints socialPoints airdroped`)
 
       totalUsers = await User.countDocuments()
     }

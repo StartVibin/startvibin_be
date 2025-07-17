@@ -98,6 +98,7 @@ export const authenticateWallet = catchAsync(
             referralPoints: user.referralPoints,
             socialPoints: user.socialPoints,
             totalPoints: user.totalPoints,
+            airdroped: user.airdroped,
        
             telegramVerified: user.telegramVerified,
             telegramJoined: user.telegramJoined,
@@ -110,6 +111,7 @@ export const authenticateWallet = catchAsync(
             telegramConnected: user.telegramConnected,
             telegramJoinedGroup: user.telegramJoinedGroup,
             emailConnected: user.emailConnected,
+            spotifyConnected: user.spotifyConnected,
             xId: user.xId,
             telegramId: user.telegramId,
             // X/Twitter user data
@@ -122,6 +124,9 @@ export const authenticateWallet = catchAsync(
             telegramFirstName: user.telegramFirstName,
             telegramLastName: user.telegramLastName,
             telegramPhotoUrl: user.telegramPhotoUrl,
+            // Spotify data
+            spotifyId: user.spotifyId,
+            spotifyEmail: user.spotifyEmail,
             // Invite system
             inviteCode: user.inviteCode,
             invitedBy: user.invitedBy,
@@ -215,6 +220,7 @@ export const getUserProfile = catchAsync(
           telegramConnected: user.telegramConnected,
           telegramJoinedGroup: user.telegramJoinedGroup,
           emailConnected: user.emailConnected,
+          spotifyConnected: user.spotifyConnected,
           xId: user.xId,
           telegramId: user.telegramId,
           // X/Twitter user data
@@ -227,6 +233,9 @@ export const getUserProfile = catchAsync(
           telegramFirstName: user.telegramFirstName,
           telegramLastName: user.telegramLastName,
           telegramPhotoUrl: user.telegramPhotoUrl,
+          // Spotify data
+          spotifyId: user.spotifyId,
+          spotifyEmail: user.spotifyEmail,
           // Invite system
           inviteCode: user.inviteCode,
           invitedBy: user.invitedBy,
@@ -238,6 +247,7 @@ export const getUserProfile = catchAsync(
           isWhitelist: user.isWhitelist,
           highScore: user.highScore,
           totalPoints: user.totalPoints,
+          airdroped: user.airdroped,
           totalSocialJoined: [user.xConnected, user.telegramJoined].filter(Boolean).length,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt

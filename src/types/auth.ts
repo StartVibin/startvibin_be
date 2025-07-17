@@ -15,6 +15,7 @@ export interface WalletAuthResponse {
         referralPoints: number
         socialPoints: number
         totalPoints: number
+        airdroped: number
         xConnected: boolean
         telegramVerified: boolean
         telegramJoined: boolean
@@ -26,6 +27,7 @@ export interface WalletAuthResponse {
         telegramConnected: boolean
         telegramJoinedGroup: boolean
         emailConnected: boolean
+        spotifyConnected: boolean
         xId: string
         telegramId: string
         // X/Twitter user data
@@ -38,6 +40,9 @@ export interface WalletAuthResponse {
         telegramFirstName: string
         telegramLastName: string
         telegramPhotoUrl: string
+        // Spotify data
+        spotifyId: string
+        spotifyEmail: string
         // Invite system
         inviteCode: string
         invitedBy: string
@@ -88,6 +93,7 @@ export interface UserProfile {
   telegramConnected: boolean
   telegramJoinedGroup: boolean
   emailConnected: boolean
+  spotifyConnected: boolean
   xId: string
   telegramId: string
   xUsername: string
@@ -101,8 +107,10 @@ export interface UserProfile {
   email: string
   googleId: string
   googleName: string
-  googlePicture: string
+            googlePicture: string
   googleVerifiedEmail: boolean
+  spotifyId: string
+  spotifyEmail: string
   inviteCode: string
   invitedBy: string
   invitedUsers: string[]
@@ -112,6 +120,7 @@ export interface UserProfile {
   referralCode: string
   isWhitelist: boolean
   highScore: number
+  airdroped: number
   createdAt: Date
   updatedAt: Date
   totalPoints: number

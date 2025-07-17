@@ -5,6 +5,8 @@ import referralRoutes from './referralRoutes'
 import leaderboardRoutes from './leaderboardRoutes'
 import gameRoutes from './gameRoutes'
 import telegramRoutes from './telegramRoutes'
+import configRoutes from './configRoutes'
+import spotifyRoutes from './spotifyRoutes'
 
 const router = Router()
 
@@ -27,5 +29,7 @@ router.use('/referrals', referralRoutes)
 router.use('/leaderboard', leaderboardRoutes)
 router.use('/game', gameRoutes)
 router.use('/telegram', telegramRoutes)
+router.use('/config', configRoutes)
+router.use('/spotify', spotifyRoutes)
 
 export default router

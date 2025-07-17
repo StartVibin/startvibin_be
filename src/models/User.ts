@@ -10,6 +10,7 @@ export interface IUser extends Document {
   xConnected: boolean
   telegramConnected: boolean
   emailConnected: boolean
+  spotifyConnected: boolean
   
   // Social platform verification flags
   telegramVerified: boolean
@@ -43,6 +44,10 @@ export interface IUser extends Document {
   googlePicture: string
   googleVerifiedEmail: boolean
   
+  // Spotify data
+  spotifyId: string
+  spotifyEmail: string
+  
   // Invite system
   inviteCode: string
   invitedBy: string
@@ -56,6 +61,7 @@ export interface IUser extends Document {
   totalPoints: number
   highScore: number
   isWhitelist: boolean
+  airdroped: number
   
   // Daily game tracking
   dailyGamesPlayed: number
@@ -98,6 +104,10 @@ const userSchema = new Schema<IUser>(
       default: false
     },
     emailConnected: {
+      type: Boolean,
+      default: false
+    },
+    spotifyConnected: {
       type: Boolean,
       default: false
     },
@@ -213,6 +223,18 @@ const userSchema = new Schema<IUser>(
       default: false
     },
     
+    // Spotify data
+    spotifyId: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    spotifyEmail: {
+      type: String,
+      default: '',
+      trim: true
+    },
+    
     // Invite system
     inviteCode: {
       type: String,
@@ -257,6 +279,10 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false
     },
+    airdroped: {
+      type: Number,
+      default: 0
+    },
     
     // Daily game tracking
     dailyGamesPlayed: {
@@ -279,6 +305,7 @@ userSchema.index({ walletAddress: 1, gamePoints: -1 })
 // Index for social platform IDs
 userSchema.index({ xId: 1 })
 userSchema.index({ telegramId: 1 })
+userSchema.index({ spotifyId: 1 })
 
 // Index for invite system
 userSchema.index({ inviteCode: 1 })
@@ -290,7 +317,7 @@ userSchema.index({ isWhitelist: 1 })
 // Index for high score
 userSchema.index({ highScore: -1 })
 
-// Virtual for total points (sum of all point types)
+// Virtual for total points (sum of all point types, excluding airdropped)
 userSchema.virtual('totalPoints').get(function() {
   return this.gamePoints + this.referralPoints + this.socialPoints
 })
