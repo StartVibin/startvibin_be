@@ -40,7 +40,7 @@ function generateAuthMessage(walletAddress: string): string {
 // Wallet authentication endpoint
 export const authenticateWallet = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { walletAddress, originalMessage, signedMessage }: WalletAuthRequest = req.body
+    const { walletAddress, originalMessage, signedMessage, referralCode }: WalletAuthRequest & { referralCode?: string } = req.body
 
     // Validate required fields
     if (!walletAddress || !originalMessage || !signedMessage) {
@@ -82,6 +82,36 @@ export const authenticateWallet = catchAsync(
         isNewUser = true
         
         logger.info(`New user created with wallet address: ${normalizedAddress}`)
+        
+        // Apply referral code if provided
+        if (referralCode && isNewUser) {
+          try {
+            // Find the referrer by invite code
+            const referrer = await User.findOne({ inviteCode: referralCode.toUpperCase() })
+            if (referrer && referrer.id !== user.id) {
+              // Apply referral code and award points
+              user.referralCode = referralCode.toUpperCase()
+              user.invitedBy = referrer.walletAddress
+              
+              // Add user to referrer's invited users list
+              if (!referrer.invitedUsers.includes(user.walletAddress)) {
+                referrer.invitedUsers.push(user.walletAddress)
+              }
+              
+              // Award points only to the referrer
+              const referrerReward = 500
+              referrer.addReferralPoints(referrerReward)
+              
+              await user.save()
+              await referrer.save()
+              
+              logger.info(`Referral applied: ${referrer.walletAddress} referred ${user.walletAddress}, referrer earned ${referrerReward} points`)
+            }
+          } catch (referralError) {
+            logger.error('Error applying referral code during registration:', referralError)
+            // Don't fail the registration if referral fails
+          }
+        }
       } else {
         logger.info(`Existing user authenticated with wallet address: ${normalizedAddress}`)
       }

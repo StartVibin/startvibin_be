@@ -6,42 +6,46 @@ import logger from '@/utils/logger'
 // Apply referral code
 export const applyReferralCode = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { userId, referralCode } = req.body
+    const { walletAddress, referralCode } = req.body
 
-    if (!userId || !referralCode) {
-      return next(new AppError('User ID and referral code are required', 400))
+    if (!walletAddress || !referralCode) {
+      return next(new AppError('Wallet address and referral code are required', 400))
     }
 
     // Find the user applying the referral code
-    const user = await User.findById(userId)
+    const user = await User.findOne({ walletAddress: walletAddress.toLowerCase() })
     if (!user) {
       return next(new AppError('User not found', 404))
     }
 
     // Check if user already has a referral code
-    if (user.referralCode) {
+    if (user.referralCode && user.referralCode.trim() !== '') {
       return next(new AppError('User already has a referral code', 400))
     }
 
-    // Find the referrer by referral code
-    const referrer = await User.findOne({ referralCode: referralCode.toUpperCase() })
+    // Find the referrer by invite code (referral codes are actually invite codes)
+    const referrer = await User.findOne({ inviteCode: referralCode.toUpperCase() })
     if (!referrer) {
       return next(new AppError('Invalid referral code', 400))
     }
 
     // Check if user is trying to use their own referral code
-    if (referrer.id === userId) {
+    if (referrer.id === user.id) {
       return next(new AppError('Cannot use your own referral code', 400))
     }
 
     // Apply referral code and award points
     user.referralCode = referralCode.toUpperCase()
+    user.invitedBy = referrer.walletAddress
     
-    // Award points to both users
-    const referralReward = 50 // Points for being referred
-    const referrerReward = 25 // Points for referring someone
+    // Add user to referrer's invited users list
+    if (!referrer.invitedUsers.includes(user.walletAddress)) {
+      referrer.invitedUsers.push(user.walletAddress)
+    }
     
-    user.addReferralPoints(referralReward)
+    // Award points only to the referrer
+    const referrerReward = 500 // Points for referring someone
+    
     referrer.addReferralPoints(referrerReward)
     
     await user.save()
@@ -56,8 +60,7 @@ export const applyReferralCode = catchAsync(
         referralCode: user.referralCode,
         referralPoints: user.referralPoints,
         totalPoints: user.totalPoints,
-        referrerReward,
-        userReward: referralReward
+        referrerReward
       }
     })
   }
